@@ -7,6 +7,9 @@ export interface SearchOptions {
   userAgent: string;
   openverseToken?: string;
   europeanaKey?: string;
+  unsplashKey?: string;
+  pexelsKey?: string;
+  pixabayKey?: string;
   timeoutMs?: number;
 }
 
@@ -27,6 +30,9 @@ export async function searchImages(
     userAgent: opts.userAgent,
     openverseToken: opts.openverseToken,
     europeanaKey: opts.europeanaKey || 'api2demo',
+    unsplashKey: opts.unsplashKey,
+    pexelsKey: opts.pexelsKey,
+    pixabayKey: opts.pixabayKey,
     signal: AbortSignal.timeout(opts.timeoutMs ?? 20000),
   };
 

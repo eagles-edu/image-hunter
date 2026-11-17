@@ -9,6 +9,9 @@ export interface AppConfig {
   userAgent: string;
   openverseToken?: string;
   europeanaKey?: string;
+  unsplashKey?: string;
+  pexelsKey?: string;
+  pixabayKey?: string;
 }
 
 export function buildServer(config: AppConfig) {
@@ -58,6 +61,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     userAgent: process.env.USER_AGENT ?? 'image-hunter-poc/0.1',
     openverseToken: process.env.OPENVERSE_TOKEN || undefined,
     europeanaKey: process.env.EUROPEANA_KEY || undefined,
+    unsplashKey: process.env.UNSPLASH_ACCESS_KEY || undefined,
+    pexelsKey: process.env.PEXELS_API_KEY || undefined,
+    pixabayKey: process.env.PIXABAY_API_KEY || undefined,
   });
   await app.listen({
     port: Number(process.env.PORT ?? 3100),

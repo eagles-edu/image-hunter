@@ -1,8 +1,9 @@
-// Licence codes use Openverse naming. Non-commercial (nc) is allowed for educational use.
-// No-derivatives (nd) is excluded because slides may crop or modify images.
-export type LicenseCode = 'cc0' | 'pdm' | 'by' | 'by-sa' | 'by-nc' | 'by-nc-sa';
+// Licence codes use Openverse naming for Creative Commons. 'stock' covers free stock-site licences
+// (Unsplash, Pexels, Pixabay) that allow unaltered use with attribution.
+// Creative Commons no-derivatives (nd) is still excluded because slides may modify images.
+export type LicenseCode = 'cc0' | 'pdm' | 'by' | 'by-sa' | 'by-nc' | 'by-nc-sa' | 'stock';
 
-export const ALLOWED_LICENSES: readonly LicenseCode[] = ['cc0', 'pdm', 'by', 'by-sa', 'by-nc', 'by-nc-sa'];
+export const ALLOWED_LICENSES: readonly LicenseCode[] = ['cc0', 'pdm', 'by', 'by-sa', 'by-nc', 'by-nc-sa', 'stock'];
 
 export interface ImageResult {
   id: string;
@@ -23,6 +24,9 @@ export interface SourceContext {
   userAgent: string;
   openverseToken?: string;
   europeanaKey: string;
+  unsplashKey?: string;
+  pexelsKey?: string;
+  pixabayKey?: string;
   signal: AbortSignal;
 }
 

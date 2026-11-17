@@ -7,6 +7,7 @@ const LICENSE_LABELS: Record<LicenseCode, string> = {
   'by-sa': 'CC BY-SA',
   'by-nc': 'CC BY-NC',
   'by-nc-sa': 'CC BY-NC-SA',
+  stock: 'free stock licence',
 };
 
 export function isAllowedLicense(code: string): code is LicenseCode {
