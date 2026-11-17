@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseWikimediaLicense } from '../src/license.js';
+import { parseLicenseUri, parseWikimediaLicense } from '../src/license.js';
 import { searchImages } from '../src/search.js';
 import type { ImageResult, ImageSource } from '../src/types.js';
 
@@ -62,5 +62,15 @@ describe('searchImages', () => {
       fake('b', [img('b', 1), { ...img('a', 2), id: 'dup' }]),
     ]);
     expect(res.results.map((r) => r.id)).toEqual(['a:1', 'b:1', 'a:2', 'a:3']);
+  });
+});
+
+describe('parseLicenseUri', () => {
+  it('maps CC URIs to allowed codes and rejects NC/ND', () => {
+    expect(parseLicenseUri('https://creativecommons.org/publicdomain/zero/1.0/')).toBe('cc0');
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by-sa/4.0/')).toBe('by-sa');
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by/4.0/')).toBe('by');
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by-nc-nd/4.0/')).toBeUndefined();
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by-nc/4.0/')).toBeUndefined();
   });
 });

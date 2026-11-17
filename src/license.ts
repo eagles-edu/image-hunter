@@ -22,6 +22,16 @@ export function parseWikimediaLicense(shortName: string): LicenseCode | undefine
   return undefined;
 }
 
+// Sources such as Internet Archive and Europeana report licences as CC URIs.
+// NC and ND licences do not match any pattern and return undefined.
+export function parseLicenseUri(uri: string): LicenseCode | undefined {
+  if (/creativecommons\.org\/publicdomain\/zero\//i.test(uri)) return 'cc0';
+  if (/creativecommons\.org\/publicdomain\/mark\//i.test(uri)) return 'pdm';
+  const m = uri.match(/creativecommons\.org\/licenses\/(by(?:-sa)?)\//i);
+  if (!m) return undefined;
+  return m[1].toLowerCase() === 'by-sa' ? 'by-sa' : 'by';
+}
+
 export function buildAttribution(input: {
   title: string;
   creator?: string;

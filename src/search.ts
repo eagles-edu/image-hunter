@@ -6,6 +6,7 @@ export interface SearchOptions {
   licenses: readonly LicenseCode[];
   userAgent: string;
   openverseToken?: string;
+  europeanaKey?: string;
   timeoutMs?: number;
 }
 
@@ -25,6 +26,7 @@ export async function searchImages(
   const ctx: SourceContext = {
     userAgent: opts.userAgent,
     openverseToken: opts.openverseToken,
+    europeanaKey: opts.europeanaKey || 'api2demo',
     signal: AbortSignal.timeout(opts.timeoutMs ?? 20000),
   };
 

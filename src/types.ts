@@ -22,6 +22,7 @@ export interface ImageResult {
 export interface SourceContext {
   userAgent: string;
   openverseToken?: string;
+  europeanaKey: string;
   signal: AbortSignal;
 }
 

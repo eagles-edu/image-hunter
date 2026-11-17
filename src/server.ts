@@ -8,6 +8,7 @@ import { ALLOWED_LICENSES } from './types.js';
 export interface AppConfig {
   userAgent: string;
   openverseToken?: string;
+  europeanaKey?: string;
 }
 
 export function buildServer(config: AppConfig) {
@@ -56,6 +57,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const app = buildServer({
     userAgent: process.env.USER_AGENT ?? 'image-hunter-poc/0.1',
     openverseToken: process.env.OPENVERSE_TOKEN || undefined,
+    europeanaKey: process.env.EUROPEANA_KEY || undefined,
   });
   await app.listen({
     port: Number(process.env.PORT ?? 3100),
