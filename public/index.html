@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Hunter</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f5f5f5; color: #222; }
+    header { padding: 16px 24px; background: #fff; border-bottom: 1px solid #ddd; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    input[type=search] { flex: 1 1 280px; padding: 8px 10px; font-size: 16px; }
+    button { padding: 8px 16px; font-size: 15px; cursor: pointer; }
+    fieldset { border: 0; padding: 0; margin: 0; display: flex; gap: 10px; }
+    main { padding: 16px 24px; }
+    .status { margin: 8px 0 12px; font-size: 14px; color: #555; }
+    .errors { color: #a00; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    figure { margin: 0; background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+    figure img { width: 100%; height: 160px; object-fit: cover; display: block; background: #eee; }
+    figcaption { padding: 8px; font-size: 12px; line-height: 1.4; }
+    figcaption a { color: #0645ad; }
+    .badge { display: inline-block; padding: 1px 6px; border-radius: 4px; background: #e8f0e8; color: #184d18; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Image Hunter <small>open-licence image search (POC)</small></h1>
+    <form id="search-form">
+      <input type="search" id="q" name="q" placeholder="Search openly licensed images" minlength="2" maxlength="200" required>
+      <fieldset>
+        <label><input type="checkbox" name="license" value="cc0" checked> CC0 / public domain</label>
+        <label><input type="checkbox" name="license" value="pdm" checked> PDM</label>
+        <label><input type="checkbox" name="license" value="by" checked> CC BY</label>
+        <label><input type="checkbox" name="license" value="by-sa" checked> CC BY-SA</label>
+      </fieldset>
+      <button type="submit">Search</button>
+    </form>
+  </header>
+  <main>
+    <div class="status" id="status"></div>
+    <div class="errors" id="errors"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+  <script>
+    const form = document.getElementById('search-form');
+    const statusEl = document.getElementById('status');
+    const errorsEl = document.getElementById('errors');
+    const grid = document.getElementById('grid');
+
+    function el(tag, props = {}, children = []) {
+      const node = document.createElement(tag);
+      Object.assign(node, props);
+      for (const child of children) node.append(child);
+      return node;
+    }
+
+    function card(item) {
+      const img = el('img', { src: item.thumbUrl || item.imageUrl, alt: item.title, loading: 'lazy' });
+      const link = el('a', { href: item.pageUrl, target: '_blank', rel: 'noopener', textContent: item.title || 'Open source page' });
+      const licence = el('a', { href: item.licenseUrl || item.pageUrl, target: '_blank', rel: 'noopener', textContent: item.license.toUpperCase() });
+      const meta = el('div', {}, [
+        el('span', { className: 'badge', textContent: item.source }), ' ',
+        licence, item.creator ? el('div', { textContent: 'by ' + item.creator }) : '',
+      ]);
+      return el('figure', {}, [img, el('figcaption', {}, [link, el('br'), meta])]);
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const q = document.getElementById('q').value.trim();
+      const licenses = [...form.querySelectorAll('input[name=license]:checked')].map((c) => c.value);
+      if (!licenses.length) { statusEl.textContent = 'Select at least one licence.'; return; }
+      statusEl.textContent = 'Searching…';
+      errorsEl.textContent = '';
+      grid.replaceChildren();
+      const params = new URLSearchParams({ q, license: licenses.join(',') });
+      try {
+        const res = await fetch('/api/search?' + params);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Search failed');
+        statusEl.textContent = `${data.results.length} result(s) for "${data.query}"`;
+        const errs = Object.entries(data.sourceErrors || {}).map(([s, m]) => `${s}: ${m}`);
+        if (errs.length) errorsEl.textContent = 'Source errors: ' + errs.join(' | ');
+        grid.replaceChildren(...data.results.map(card));
+      } catch (err) {
+        statusEl.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
