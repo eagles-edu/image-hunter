@@ -79,7 +79,7 @@
       try {
         const res = await fetch('/api/search?' + params);
         const isJson = (res.headers.get('content-type') || '').includes('application/json');
-        if (!isJson) throw new Error(`server returned ${res.status} (not JSON); is the API running on this origin?`);
+        if (!isJson) throw new Error(`${location.origin} did not return the API (HTTP ${res.status}). Open the app from the image-hunter server (default http://127.0.0.1:3100), not from a static file server such as Live Server.`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || data.message || 'Search failed');
         statusEl.textContent = `${data.results.length} result(s) for "${data.query}"`;
