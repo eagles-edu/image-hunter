@@ -25,7 +25,7 @@ export async function searchImages(
   const ctx: SourceContext = {
     userAgent: opts.userAgent,
     openverseToken: opts.openverseToken,
-    signal: AbortSignal.timeout(opts.timeoutMs ?? 8000),
+    signal: AbortSignal.timeout(opts.timeoutMs ?? 20000),
   };
 
   const settled = await Promise.allSettled(sources.map((s) => s.search(query, opts.limit, ctx)));
