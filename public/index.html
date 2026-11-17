@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -29,10 +29,11 @@
     <form id="search-form">
       <input type="search" id="q" name="q" placeholder="Search openly licensed images" minlength="2" maxlength="200" required>
       <fieldset>
-        <label><input type="checkbox" name="license" value="cc0" checked> CC0 / public domain</label>
-        <label><input type="checkbox" name="license" value="pdm" checked> PDM</label>
-        <label><input type="checkbox" name="license" value="by" checked> CC BY</label>
-        <label><input type="checkbox" name="license" value="by-sa" checked> CC BY-SA</label>
+       <legend>openly licensed images</legend>
+        <label><input type="checkbox" class="licence-option" value="cc0" checked> CC0 / public domain</label>
+        <label><input type="checkbox" class="licence-option" value="pdm" checked> PDM</label>
+        <label><input type="checkbox" class="licence-option" value="by" checked> CC BY</label>
+        <label><input type="checkbox" class="licence-option" value="by-sa" checked> CC BY-SA</label>
       </fieldset>
       <button type="submit">Search</button>
     </form>
@@ -69,7 +70,7 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const q = document.getElementById('q').value.trim();
-      const licenses = [...form.querySelectorAll('input[name=license]:checked')].map((c) => c.value);
+      const licenses = [...form.querySelectorAll('.licence-option:checked')].map((c) => c.value);
       if (!licenses.length) { statusEl.textContent = 'Select at least one licence.'; return; }
       statusEl.textContent = 'Searching…';
       errorsEl.textContent = '';
@@ -77,8 +78,10 @@
       const params = new URLSearchParams({ q, license: licenses.join(',') });
       try {
         const res = await fetch('/api/search?' + params);
+        const isJson = (res.headers.get('content-type') || '').includes('application/json');
+        if (!isJson) throw new Error(`server returned ${res.status} (not JSON); is the API running on this origin?`);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Search failed');
+        if (!res.ok) throw new Error(data.error || data.message || 'Search failed');
         statusEl.textContent = `${data.results.length} result(s) for "${data.query}"`;
         const errs = Object.entries(data.sourceErrors || {}).map(([s, m]) => `${s}: ${m}`);
         if (errs.length) errorsEl.textContent = 'Source errors: ' + errs.join(' | ');

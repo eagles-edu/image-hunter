@@ -42,6 +42,13 @@ export function buildServer(config: AppConfig) {
 
   app.register(fastifyStatic, { root: fileURLToPath(new URL('../public/', import.meta.url)) });
 
+  app.setNotFoundHandler((req, reply) => {
+    if (req.url.startsWith('/api/')) {
+      return reply.code(404).send({ error: `no such API route: ${req.method} ${req.url.split('?')[0]}` });
+    }
+    return reply.code(404).type('text/plain').send('Not found');
+  });
+
   return app;
 }
 
