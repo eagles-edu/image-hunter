@@ -1,8 +1,8 @@
-// Licence codes use Openverse naming. Non-commercial (nc) and no-derivatives (nd) are excluded
-// because the slides we generate are commercial-friendly re-uses and may be modified.
-export type LicenseCode = 'cc0' | 'pdm' | 'by' | 'by-sa';
+// Licence codes use Openverse naming. Non-commercial (nc) is allowed for educational use.
+// No-derivatives (nd) is excluded because slides may crop or modify images.
+export type LicenseCode = 'cc0' | 'pdm' | 'by' | 'by-sa' | 'by-nc' | 'by-nc-sa';
 
-export const ALLOWED_LICENSES: readonly LicenseCode[] = ['cc0', 'pdm', 'by', 'by-sa'];
+export const ALLOWED_LICENSES: readonly LicenseCode[] = ['cc0', 'pdm', 'by', 'by-sa', 'by-nc', 'by-nc-sa'];
 
 export interface ImageResult {
   id: string;

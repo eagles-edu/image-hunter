@@ -34,8 +34,10 @@ describe('parseWikimediaLicense', () => {
     expect(parseWikimediaLicense('CC BY 2.0')).toBe('by');
     expect(parseWikimediaLicense('Public domain')).toBe('pdm');
     expect(parseWikimediaLicense('CC0')).toBe('cc0');
-    expect(parseWikimediaLicense('CC BY-NC-SA 4.0')).toBeUndefined();
+    expect(parseWikimediaLicense('CC BY-NC-SA 4.0')).toBe('by-nc-sa');
+    expect(parseWikimediaLicense('CC BY-NC 3.0')).toBe('by-nc');
     expect(parseWikimediaLicense('CC BY-ND 4.0')).toBeUndefined();
+    expect(parseWikimediaLicense('CC BY-NC-ND 4.0')).toBeUndefined();
     expect(parseWikimediaLicense('GFDL')).toBeUndefined();
   });
 });
@@ -66,11 +68,13 @@ describe('searchImages', () => {
 });
 
 describe('parseLicenseUri', () => {
-  it('maps CC URIs to allowed codes and rejects NC/ND', () => {
+  it('maps CC URIs to allowed codes and rejects ND variants', () => {
     expect(parseLicenseUri('https://creativecommons.org/publicdomain/zero/1.0/')).toBe('cc0');
     expect(parseLicenseUri('http://creativecommons.org/licenses/by-sa/4.0/')).toBe('by-sa');
     expect(parseLicenseUri('http://creativecommons.org/licenses/by/4.0/')).toBe('by');
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by-nc/4.0/')).toBe('by-nc');
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by-nc-sa/4.0/')).toBe('by-nc-sa');
     expect(parseLicenseUri('http://creativecommons.org/licenses/by-nc-nd/4.0/')).toBeUndefined();
-    expect(parseLicenseUri('http://creativecommons.org/licenses/by-nc/4.0/')).toBeUndefined();
+    expect(parseLicenseUri('http://creativecommons.org/licenses/by-nd/4.0/')).toBeUndefined();
   });
 });

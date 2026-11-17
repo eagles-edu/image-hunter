@@ -5,6 +5,8 @@ const LICENSE_LABELS: Record<LicenseCode, string> = {
   pdm: 'Public Domain Mark',
   by: 'CC BY',
   'by-sa': 'CC BY-SA',
+  'by-nc': 'CC BY-NC',
+  'by-nc-sa': 'CC BY-NC-SA',
 };
 
 export function isAllowedLicense(code: string): code is LicenseCode {
@@ -16,20 +18,23 @@ export function parseWikimediaLicense(shortName: string): LicenseCode | undefine
   const name = shortName.trim();
   if (/^CC0\b/i.test(name)) return 'cc0';
   if (/^public domain/i.test(name) || /^PD\b/.test(name)) return 'pdm';
-  if (/\b(NC|ND)\b/i.test(name)) return undefined;
+  if (/\bND\b/i.test(name)) return undefined;
+  if (/^CC BY-NC-SA\b/i.test(name)) return 'by-nc-sa';
+  if (/^CC BY-NC\b/i.test(name)) return 'by-nc';
   if (/^CC BY-SA\b/i.test(name)) return 'by-sa';
   if (/^CC BY\b/i.test(name)) return 'by';
   return undefined;
 }
 
 // Sources such as Internet Archive and Europeana report licences as CC URIs.
-// NC and ND licences do not match any pattern and return undefined.
+// ND licences return undefined.
 export function parseLicenseUri(uri: string): LicenseCode | undefined {
   if (/creativecommons\.org\/publicdomain\/zero\//i.test(uri)) return 'cc0';
   if (/creativecommons\.org\/publicdomain\/mark\//i.test(uri)) return 'pdm';
-  const m = uri.match(/creativecommons\.org\/licenses\/(by(?:-sa)?)\//i);
+  const m = uri.match(/creativecommons\.org\/licenses\/(by(?:-nc)?(?:-nd|-sa)?)\//i);
   if (!m) return undefined;
-  return m[1].toLowerCase() === 'by-sa' ? 'by-sa' : 'by';
+  const code = m[1].toLowerCase();
+  return ALLOWED_LICENSES.find((l) => l === code);
 }
 
 export function buildAttribution(input: {

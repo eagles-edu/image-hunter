@@ -19,7 +19,7 @@ export const openverse: ImageSource = {
   async search(query, limit, ctx: SourceContext): Promise<ImageResult[]> {
     const params = new URLSearchParams({
       q: query,
-      license: 'cc0,pdm,by,by-sa',
+      license: 'cc0,pdm,by,by-sa,by-nc,by-nc-sa',
       page_size: String(limit),
     });
     const headers: Record<string, string> = { 'User-Agent': ctx.userAgent, Accept: 'application/json' };
